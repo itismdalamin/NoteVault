@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your note — NoteVault</title>
+<meta name="description" content="Your private, auto-saving, self-expiring note." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <img src="brand-icon.png" alt="NoteVault" />
+      </span>
+      <span>NoteVault<small>Secure Note Sharing</small></span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <nav class="main-nav">
+      <a href="index.html" class="nav-cta">New / open note</a>
+      <a href="#" data-modal-open="modal-about">About Us</a>
+      <a href="#" data-modal-open="modal-privacy">Privacy Policy</a>
+    </nav>
+  </div>
+</header>
+
+<div class="workspace-topbar">
+  <div class="container">
+    <div class="clock">
+      <span class="time" id="clock-time">--:--:--</span>
+      <span class="date" id="clock-date">Loading date…</span>
+    </div>
+    <div class="status-pill" id="save-status">
+      <span class="status-dot"></span>
+      <span id="save-status-text">Connecting…</span>
+    </div>
+  </div>
+</div>
+
+<!-- Editor view -->
+<main class="workspace" id="workspace-view">
+  <div class="container workspace-grid">
+
+    <section class="editor-card">
+      <textarea id="note-content" placeholder="Start typing your note… it saves automatically as you go." aria-label="Note content"></textarea>
+      <div class="editor-footer">
+        <span id="char-count">0 words · 0 characters</span>
+        <span id="last-updated">Not saved yet</span>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+
+      <div class="side-card">
+        <h4>Your secret phrase</h4>
+        <div class="phrase-capsule">
+          <span class="phrase-text" id="phrase-display">—</span>
+          <button class="icon-btn" id="copy-phrase-btn" aria-label="Copy phrase" title="Copy phrase">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <p class="hint-text">Anyone with this phrase can open and edit this note. Share it only with people you trust.</p>
+      </div>
+
+      <div class="side-card">
+        <h4>Expiry</h4>
+        <select class="select-field" id="expiry-select" aria-label="Note expiry duration">
+          <option value="5m">5 minutes</option>
+          <option value="10m">10 minutes</option>
+          <option value="15m">15 minutes</option>
+          <option value="30m" selected>30 minutes</option>
+          <option value="1h">1 hour</option>
+          <option value="3h">3 hours</option>
+          <option value="12h">12 hours</option>
+          <option value="1d">1 day</option>
+          <option value="3d">3 days</option>
+          <option value="7d">7 days</option>
+          <option value="30d">30 days</option>
+          <option value="90d">90 days</option>
+        </select>
+
+        <div class="countdown-row">
+          <div>
+            <div class="countdown-time" id="countdown-time">--:--:--</div>
+            <div class="countdown-label">Time remaining</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="reset-timer-btn" title="Reset countdown using the selected duration">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h4>Actions</h4>
+        <div class="action-row">
+          <button class="btn btn-primary" id="save-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save
+          </button>
+          <button class="btn btn-danger" id="delete-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete
+          </button>
+        </div>
+        <p class="hint-text">Changes save automatically a moment after you stop typing — the buttons are there for a manual save or to remove the note right away.</p>
+      </div>
+
+    </aside>
+  </div>
+</main>
+
+<!-- Expired / not found view -->
+<section class="state-screen" id="state-view" style="display:none;">
+  <div>
+    <div class="state-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+    </div>
+    <h2 id="state-title">Note unavailable</h2>
+    <p id="state-desc">This phrase doesn't match an active note. It may have expired, been deleted, or been typed incorrectly.</p>
+    <a href="index.html" class="btn btn-primary">Back to home</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <img src="brand-icon.png" alt="NoteVault" />
+        </span>
+        <span>NoteVault</span>
+      </a>
+      <p>A lightweight, account-free way to write a note and hand it off with three memorable words. Notes sync in real time and expire on your schedule.</p>
+      <div class="footer-social">
+<!-- Social -->
+        <a href="mailto:itismdalamin@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></a>
+        <a href="https://facebook.com/itismdalamin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.5-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg></a>
+        <a href="https://instagram.com/itismdalamin" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://wa.me/+8801345934725" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.1 4 4.1-1.1a9.9 9.9 0 0 0 5.5 1.6h.01A9.9 9.9 0 0 0 22 12a9.9 9.9 0 0 0-9.96-10Zm5.8 14a1.6 1.6 0 0 1-1.1.8 6.9 6.9 0 0 1-3.4-.7 12 12 0 0 1-3.7-3.3 7 7 0 0 1-1.4-3.7c0-.9.4-1.5.7-1.8.2-.2.4-.3.6-.3h.4c.1 0 .3 0 .4.3l.9 2.2c.1.2.1.3 0 .5l-.4.5c-.1.1-.2.3-.1.5.2.5.7 1.2 1.3 1.8.6.6 1.3 1 1.9 1.3.2.1.3.1.5-.1l.5-.6c.1-.1.3-.2.5-.1l2.1 1c.2.1.3.2.3.4 0 .1 0 .3-.1.5Z"/></svg></a>
+        <a href="https://twitter.com/itismdalamin" target="_blank" rel="noopener" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 4.5a8.6 8.6 0 0 1-2.36.65 4.07 4.07 0 0 0 1.8-2.27 8.2 8.2 0 0 1-2.6 1 4.1 4.1 0 0 0-7 3.74A11.6 11.6 0 0 1 4.3 3.6a4.1 4.1 0 0 0 1.27 5.48A4 4 0 0 1 3.7 8.4v.05a4.1 4.1 0 0 0 3.29 4.02 4.1 4.1 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.24 8.24 0 0 1 2 17.4a11.6 11.6 0 0 0 6.29 1.84c7.55 0 11.68-6.26 11.68-11.68l-.01-.53A8.3 8.3 0 0 0 23 4.5Z"/></svg></a>
+        <a href="https://github.com/itismdalamin" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.83-2.34 4.68-4.57 4.92.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="index.html">Create a note</a></li>
+        <li><a href="index.html#features">Features</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#" data-modal-open="modal-about">About Us</a></li>
+        <li><a href="#" data-modal-open="modal-privacy">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="#" data-modal-open="modal-privacy">Data & Expiry</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 NoteVault. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#" data-modal-open="modal-about">About Us</a>
+      <a href="#" data-modal-open="modal-privacy">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+
+<!-- About Us -->
+<div class="modal-overlay" id="modal-about">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <div class="modal-head">
+      <h3 id="about-title">About Us</h3>
+      <button class="modal-close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p>NoteVault is a small, focused tool for handing a note to someone else without setting up an account, a login, or a shared drive. Write it, get a three-word phrase, and pass that phrase along however you already talk to that person.</p>
+    <h4>Why three words</h4>
+    <p>A phrase built from three shuffled words is easy to read aloud, easy to type on a phone, and — with our word sets combined — spread across billions of combinations, so notes don't collide.</p>
+    <h4>What we're not</h4>
+    <p>We're not a permanent archive. Every note carries an expiry you choose, and once it lapses the content is no longer reachable through the app.</p>
+  </div>
+</div>
+
+<!-- Privacy Policy -->
+<div class="modal-overlay" id="modal-privacy">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <div class="modal-head">
+      <h3 id="privacy-title">Privacy Policy</h3>
+      <button class="modal-close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p>This policy explains what happens to the text you write in NoteVault in plain terms.</p>
+    <h4>What we store</h4>
+    <p>The content of your note, the three-word phrase tied to it, and the expiry time you set are stored in our database so the note can sync in real time and be reopened with the phrase.</p>
+    <h4>Who can access a note</h4>
+    <p>Anyone who has the exact three-word phrase can view and edit that note. Treat the phrase like a password — anyone you share it with can read and change the content until it expires.</p>
+    <h4>Expiry & deletion</h4>
+    <p>Once a note's expiry time passes, it's no longer accessible through the app. Deleting a note or letting it expire removes it from active use.</p>
+    <h4>What we don't do</h4>
+    <p>We don't require an account, we don't ask for your name or email to use the note-taking features, and we don't sell note content.</p>
+    <h4>Open source</h4>
+    <p>NoteVault is an open-source project — the full source code is publicly available for anyone to read, audit, or self-host. You can review exactly how notes are stored and handled on <a href="https://github.com/itismdalamin/NoteVault" target="_blank" rel="noopener" style="color: var(--accent-2);">GitHub</a>.</p>
+  </div>
+</div>
+
+<!-- Delete confirmation -->
+<div class="modal-overlay" id="modal-delete-confirm">
+  <div class="modal-box modal-box-sm" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="modal-head">
+      <h3 id="delete-title">Delete this note?</h3>
+      <button class="modal-close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-warning">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <p>This permanently erases the note's content. The phrase <strong id="delete-phrase-name">—</strong> will stop working immediately — anyone you shared it with, including you, won't be able to open it again, and there's no way to undo this or recover what was written.</p>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-ghost" data-modal-close>Cancel</button>
+      <button class="btn btn-danger" id="confirm-delete-btn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Delete permanently
+      </button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="notes.js"></script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NoteVault — Share a note with three words</title>
+<meta name="description" content="Write a note, get a unique three-word phrase, and share it. Self-destructs on schedule. No account required." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <img src="brand-icon.png" alt="NoteVault" />
+      </span>
+      <span>NoteVault<small>Secure Note Sharing</small></span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <nav class="main-nav">
+      <a href="#features">Features</a>
+      <a href="#" data-modal-open="modal-about">About Us</a>
+      <a href="#" data-modal-open="modal-privacy">Privacy Policy</a>
+      <a href="#action-panel" class="nav-cta">Open a note</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span> No sign-up · Open source · Auto-expiring</span>
+        <h1>Write it once. Share it with <span class="accent-text">three words</span>.</h1>
+        <p class="hero-sub">
+          NoteVault turns any note into a private, self-destructing link disguised as a memorable
+          three-word phrase. Type your note, hand over the phrase, and it's gone when the timer runs out.
+        </p>
+        <a class="source-link" href="https://github.com/itismdalamin/NoteVault" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.83-2.34 4.68-4.57 4.92.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+          This project is open source — view the code on GitHub
+        </a>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>~25B+</b><span>possible phrases</span></div>
+          <div class="hero-stat"><b>Real-time</b><span>synced edits</span></div>
+          <div class="hero-stat"><b>N/A</b><span>account required</span></div>
+        </div>
+      </div>
+
+      <div class="panel" id="action-panel">
+        <div class="panel-title">Start a note</div>
+        <p class="panel-desc">Create a brand-new secure note, or open one you already have the phrase for.</p>
+
+        <button class="btn btn-primary btn-block" id="create-note-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Create new note
+        </button>
+
+        <div class="divider-row">or open with your phrase</div>
+
+        <form id="load-form" novalidate>
+          <div class="phrase-input-row">
+            <input class="phrase-box" type="text" maxlength="18" placeholder="word" id="word-1" autocomplete="off" aria-label="First word of phrase" />
+            <span class="phrase-sep">—</span>
+            <input class="phrase-box" type="text" maxlength="18" placeholder="word" id="word-2" autocomplete="off" aria-label="Second word of phrase" />
+            <span class="phrase-sep">—</span>
+            <input class="phrase-box" type="text" maxlength="18" placeholder="word" id="word-3" autocomplete="off" aria-label="Third word of phrase" />
+          </div>
+          <div class="field-error" id="load-error"></div>
+          <button class="btn btn-outline btn-block" id="load-btn" type="submit">Load note</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-head">
+        <h2>Built for a quick, private handoff</h2>
+        <p>Everything is synced in real time and disappears on your schedule — nothing to install, nothing to remember but three words.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon violet">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <h3>Three-word access</h3>
+          <p>Every note gets a unique, easy-to-say phrase built from a shuffled word set — no logins, no links to lose.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon mint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+          </div>
+          <h3>Set-it expiry</h3>
+          <p>Choose anywhere from 5 minutes to 90 days. When the countdown hits zero, the note is no longer reachable.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+          </div>
+          <h3>Live sync</h3>
+          <p>Open the same phrase on two screens and every keystroke appears instantly on both — handy for pairing on the fly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <img src="brand-icon.png" alt="NoteVault" />
+        </span>
+        <span>NoteVault</span>
+      </a>
+      <p>A lightweight, account-free way to write a note and hand it off with three memorable words. Notes sync in real time and expire on your schedule.</p>
+<!-- Social -->
+      <div class="footer-social">
+        <a href="mailto:itismdalamin@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></a>
+        <a href="https://facebook.com/itismdalamin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.5-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg></a>
+        <a href="https://instagram.com/itismdalamin" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://wa.me/+8801345934725" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.1 4 4.1-1.1a9.9 9.9 0 0 0 5.5 1.6h.01A9.9 9.9 0 0 0 22 12a9.9 9.9 0 0 0-9.96-10Zm5.8 14a1.6 1.6 0 0 1-1.1.8 6.9 6.9 0 0 1-3.4-.7 12 12 0 0 1-3.7-3.3 7 7 0 0 1-1.4-3.7c0-.9.4-1.5.7-1.8.2-.2.4-.3.6-.3h.4c.1 0 .3 0 .4.3l.9 2.2c.1.2.1.3 0 .5l-.4.5c-.1.1-.2.3-.1.5.2.5.7 1.2 1.3 1.8.6.6 1.3 1 1.9 1.3.2.1.3.1.5-.1l.5-.6c.1-.1.3-.2.5-.1l2.1 1c.2.1.3.2.3.4 0 .1 0 .3-.1.5Z"/></svg></a>
+        <a href="https://twitter.com/itismdalamin" target="_blank" rel="noopener" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 4.5a8.6 8.6 0 0 1-2.36.65 4.07 4.07 0 0 0 1.8-2.27 8.2 8.2 0 0 1-2.6 1 4.1 4.1 0 0 0-7 3.74A11.6 11.6 0 0 1 4.3 3.6a4.1 4.1 0 0 0 1.27 5.48A4 4 0 0 1 3.7 8.4v.05a4.1 4.1 0 0 0 3.29 4.02 4.1 4.1 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.24 8.24 0 0 1 2 17.4a11.6 11.6 0 0 0 6.29 1.84c7.55 0 11.68-6.26 11.68-11.68l-.01-.53A8.3 8.3 0 0 0 23 4.5Z"/></svg></a>
+        <a href="https://github.com/itismdalamin" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.83-2.34 4.68-4.57 4.92.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="#action-panel">Create a note</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="notes.html">Open workspace</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#" data-modal-open="modal-about">About Us</a></li>
+        <li><a href="#" data-modal-open="modal-privacy">Privacy Policy</a></li>
+        <li><a href="#" data-modal-open="modal-privacy">Terms</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <ul>
+        <li><a href="#" data-modal-open="modal-privacy">Data & Expiry</a></li>
+        <li><a href="#" data-modal-open="modal-about">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 NoteVault. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#" data-modal-open="modal-about">About Us</a>
+      <a href="#" data-modal-open="modal-privacy">Privacy Policy</a>
+    </div>
+  </div>
+</footer>
+
+<!-- About Us -->
+<div class="modal-overlay" id="modal-about">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <div class="modal-head">
+      <h3 id="about-title">About Us</h3>
+      <button class="modal-close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p>NoteVault is a small, focused tool for handing a note to someone else without setting up an account, a login, or a shared drive. Write it, get a three-word phrase, and pass that phrase along however you already talk to that person.</p>
+    <h4>Why three words</h4>
+    <p>A phrase built from three shuffled words is easy to read aloud, easy to type on a phone, and — with our word sets combined — spread across billions of combinations, so notes don't collide.</p>
+    <h4>What we're not</h4>
+    <p>We're not a permanent archive. Every note carries an expiry you choose, and once it lapses the content is no longer reachable through the app.</p>
+  </div>
+</div>
+
+<!-- Privacy Policy -->
+<div class="modal-overlay" id="modal-privacy">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <div class="modal-head">
+      <h3 id="privacy-title">Privacy Policy</h3>
+      <button class="modal-close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p>This policy explains what happens to the text you write in NoteVault in plain terms.</p>
+    <h4>What we store</h4>
+    <p>The content of your note, the three-word phrase tied to it, and the expiry time you set are stored in our database so the note can sync in real time and be reopened with the phrase.</p>
+    <h4>Who can access a note</h4>
+    <p>Anyone who has the exact three-word phrase can view and edit that note. Treat the phrase like a password — anyone you share it with can read and change the content until it expires.</p>
+    <h4>Expiry & deletion</h4>
+    <p>Once a note's expiry time passes, it's no longer accessible through the app. Deleting a note or letting it expire removes it from active use.</p>
+    <h4>What we don't do</h4>
+    <p>We don't require an account, we don't ask for your name or email to use the note-taking features, and we don't sell note content.</p>
+    <h4>Open source</h4>
+    <p>NoteVault is an open-source project — the full source code is publicly available for anyone to read, audit, or self-host. You can review exactly how notes are stored and handled on <a href="https://github.com/itismdalamin/NoteVault" target="_blank" rel="noopener" style="color: var(--accent-2);">GitHub</a>.</p>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
