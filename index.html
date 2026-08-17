@@ -126,7 +126,6 @@
         <span>NoteVault</span>
       </a>
       <p>A lightweight, account-free way to write a note and hand it off with three memorable words. Notes sync in real time and expire on your schedule.</p>
-<!-- Social -->
       <div class="footer-social">
         <a href="mailto:itismdalamin@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></a>
         <a href="https://facebook.com/itismdalamin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.5-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg></a>
@@ -156,7 +155,7 @@
       <h5>Resources</h5>
       <ul>
         <li><a href="#" data-modal-open="modal-privacy">Data & Expiry</a></li>
-        <li><a href="#" data-modal-open="modal-about">Contact</a></li>
+        <li><a href="#" data-modal-open="modal-contact">Contact</a></li>
       </ul>
     </div>
   </div>
@@ -169,7 +168,7 @@
   </div>
 </footer>
 
-<!-- About Us -->
+<!-- About Us modal -->
 <div class="modal-overlay" id="modal-about">
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="about-title">
     <div class="modal-head">
@@ -186,7 +185,7 @@
   </div>
 </div>
 
-<!-- Privacy Policy -->
+<!-- Privacy Policy modal -->
 <div class="modal-overlay" id="modal-privacy">
   <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
     <div class="modal-head">
@@ -206,6 +205,27 @@
     <p>We don't require an account, we don't ask for your name or email to use the note-taking features, and we don't sell note content.</p>
     <h4>Open source</h4>
     <p>NoteVault is an open-source project — the full source code is publicly available for anyone to read, audit, or self-host. You can review exactly how notes are stored and handled on <a href="https://github.com/itismdalamin/NoteVault" target="_blank" rel="noopener" style="color: var(--accent-2);">GitHub</a>.</p>
+  </div>
+</div>
+
+<!-- Contact modal -->
+<div class="modal-overlay" id="modal-contact">
+  <div class="modal-box modal-box-sm" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+    <div class="modal-head">
+      <h3 id="contact-title">Contact</h3>
+      <button class="modal-close" data-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <p>Questions, feedback, or something not working right? Reach out however's easiest — all the same links from the footer, in one place.</p>
+    <div class="footer-social modal-social-row">
+        <a href="mailto:itismdalamin@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></a>
+        <a href="https://facebook.com/itismdalamin" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H7.9V12h2.6V9.8c0-2.6 1.5-4 3.9-4 1.1 0 2.3.2 2.3.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg></a>
+        <a href="https://instagram.com/itismdalamin" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/></svg></a>
+        <a href="https://wa.me/+8801345934725" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.1 4 4.1-1.1a9.9 9.9 0 0 0 5.5 1.6h.01A9.9 9.9 0 0 0 22 12a9.9 9.9 0 0 0-9.96-10Zm5.8 14a1.6 1.6 0 0 1-1.1.8 6.9 6.9 0 0 1-3.4-.7 12 12 0 0 1-3.7-3.3 7 7 0 0 1-1.4-3.7c0-.9.4-1.5.7-1.8.2-.2.4-.3.6-.3h.4c.1 0 .3 0 .4.3l.9 2.2c.1.2.1.3 0 .5l-.4.5c-.1.1-.2.3-.1.5.2.5.7 1.2 1.3 1.8.6.6 1.3 1 1.9 1.3.2.1.3.1.5-.1l.5-.6c.1-.1.3-.2.5-.1l2.1 1c.2.1.3.2.3.4 0 .1 0 .3-.1.5Z"/></svg></a>
+        <a href="https://twitter.com/itismdalamin" target="_blank" rel="noopener" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 4.5a8.6 8.6 0 0 1-2.36.65 4.07 4.07 0 0 0 1.8-2.27 8.2 8.2 0 0 1-2.6 1 4.1 4.1 0 0 0-7 3.74A11.6 11.6 0 0 1 4.3 3.6a4.1 4.1 0 0 0 1.27 5.48A4 4 0 0 1 3.7 8.4v.05a4.1 4.1 0 0 0 3.29 4.02 4.1 4.1 0 0 1-1.85.07 4.1 4.1 0 0 0 3.83 2.85A8.24 8.24 0 0 1 2 17.4a11.6 11.6 0 0 0 6.29 1.84c7.55 0 11.68-6.26 11.68-11.68l-.01-.53A8.3 8.3 0 0 0 23 4.5Z"/></svg></a>
+        <a href="https://github.com/itismdalamin" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.83-2.34 4.68-4.57 4.92.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
+    </div>
   </div>
 </div>
 
