@@ -140,6 +140,7 @@ p { margin: 0; }
   place-items: center;
   overflow: hidden;
   flex-shrink: 0;
+  background: var(--panel-2);
 }
 
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -269,6 +270,10 @@ p { margin: 0; }
   grid-template-columns: 1.05fr 0.95fr;
   gap: 56px;
   align-items: center;
+}
+
+.hero-content {
+  display: block;
 }
 
 .eyebrow {
@@ -655,7 +660,9 @@ p { margin: 0; }
   font-size: 1.02rem;
 }
 
-.field-label.floated {
+.field-label.floated,
+.title-field .field-label.floated,
+.note-field .field-label.floated {
   top: -9px;
   left: 16px;
   font-family: var(--font-body);
@@ -1021,7 +1028,6 @@ select.select-field:focus { border-color: var(--accent-2); }
 .custom-expiry-preview strong { color: var(--accent-2); font-family: var(--font-mono); }
 .custom-expiry-preview .preview-date { white-space: nowrap; }
 
-
 @keyframes modal-in {
   from { opacity: 0; transform: translateY(14px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -1109,7 +1115,23 @@ select.select-field:focus { border-color: var(--accent-2); }
    ========================================================================= */
 
 @media (max-width: 980px) {
-  .hero-grid { grid-template-columns: 1fr; }
+  .hero-grid {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .hero-content {
+    display: contents;
+  }
+  .hero-content .eyebrow { order: 1; }
+  .hero-content h1 { order: 2; }
+  .hero-grid .panel, #action-panel { order: 3; width: 100%; }
+  .hero-content .hero-sub { order: 4; }
+  .hero-content .source-link { order: 5; }
+  .hero-content .hero-stats { order: 6; }
+
   .hero { padding: 40px 0 60px; }
   .feature-grid { grid-template-columns: 1fr 1fr; }
   .workspace-grid { grid-template-columns: 1fr; }
@@ -1130,12 +1152,29 @@ select.select-field:focus { border-color: var(--accent-2); }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
   .note-input { min-height: 42vh; padding: 18px 20px 20px; font-size: 0.98rem; }
   .title-input { padding: 18px 20px 12px; font-size: 1.18rem; }
-  .note-field .field-label { top: 18px; left: 20px; }
-  .field-label { top: 18px; left: 20px; font-size: 1.18rem; }
+  .note-field .field-label:not(.floated) { top: 18px; left: 20px; }
+  .title-field .field-label:not(.floated),
+  .field-label:not(.floated) { top: 18px; left: 20px; font-size: 1.18rem; }
+
+  .field-label.floated,
+  .title-field .field-label.floated,
+  .note-field .field-label.floated {
+    top: -9px;
+    left: 16px;
+    font-size: 0.68rem;
+  }
+
   .panel { padding: 24px; }
   .modal-box { padding: 24px; }
   .phrase-input-row { flex-wrap: nowrap; }
   .clock .time { font-size: 0.95rem; }
+  .modal-box .action-row {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .modal-box .action-row .btn {
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
