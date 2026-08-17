@@ -182,8 +182,6 @@ setInterval(tickCountdown, 1000);
 /* ---------------------------------------------------------------------
    Realtime Firestore sync
    ------------------------------------------------------------------- */
-let suppressNextContentSync = false;
-
 const unsubscribe = onSnapshot(
   noteRef,
   (snap) => {
