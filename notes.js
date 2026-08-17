@@ -33,7 +33,10 @@ const noteRef = doc(db, "notes", phrase);
 /* ---------------------------------------------------------------------
    Element refs
    ------------------------------------------------------------------- */
+const titleInput = document.getElementById("note-title");
+const titleLabel = document.getElementById("title-label");
 const textarea = document.getElementById("note-content");
+const noteLabel = document.getElementById("note-label");
 const charCount = document.getElementById("char-count");
 const lastUpdated = document.getElementById("last-updated");
 const phraseDisplay = document.getElementById("phrase-display");
@@ -51,9 +54,42 @@ const clockDate = document.getElementById("clock-date");
 phraseDisplay.textContent = phrase;
 
 function formatCounts(text) {
-  const words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
-  return `${words} words · ${text.length} characters`;
+  const trimmed = text.trim();
+  const lines = text.length === 0 ? 0 : text.split(/\n/).length;
+  const words = trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length;
+  return `${lines} lines · ${words} words · ${text.length} characters`;
 }
+
+/* ---------------------------------------------------------------------
+   Floating labels — "Title" / "Write Note"
+   ------------------------------------------------------------------- */
+function updateFieldLabel(labelEl, fieldEl, restText, floatedText) {
+  const active = document.activeElement === fieldEl || fieldEl.value.length > 0;
+  labelEl.textContent = active ? floatedText : restText;
+  labelEl.classList.toggle("floated", active);
+}
+
+function refreshTitleLabel() {
+  updateFieldLabel(titleLabel, titleInput, "Title", "Title");
+}
+function refreshNoteLabel() {
+  updateFieldLabel(noteLabel, textarea, "Write Note", "Note");
+}
+
+function autoResizeTitle() {
+  titleInput.style.height = "auto";
+  titleInput.style.height = `${Math.min(titleInput.scrollHeight, 96)}px`;
+}
+
+titleInput.addEventListener("input", () => {
+  autoResizeTitle();
+  refreshTitleLabel();
+});
+titleInput.addEventListener("focus", refreshTitleLabel);
+titleInput.addEventListener("blur", refreshTitleLabel);
+
+textarea.addEventListener("focus", refreshNoteLabel);
+textarea.addEventListener("blur", refreshNoteLabel);
 
 /* ---------------------------------------------------------------------
    Duration lookup for the expiry <select>
@@ -165,15 +201,29 @@ const unsubscribe = onSnapshot(
         return;
       }
     }
-    if (data.expiryLabel && expirySelect.value !== data.expiryLabel) {
-      expirySelect.value = data.expiryLabel;
+    if (data.expiryLabel) {
+      appliedExpiryLabel = data.expiryLabel;
+      if (expirySelect.value !== data.expiryLabel) {
+        expirySelect.value = data.expiryLabel;
+      }
+    }
+    if (typeof data.customDurationMs === "number") {
+      currentCustomDurationMs = data.customDurationMs;
     }
     tickCountdown();
+
+    const remoteTitle = data.title || "";
+    if (document.activeElement !== titleInput && titleInput.value !== remoteTitle) {
+      titleInput.value = remoteTitle;
+      autoResizeTitle();
+    }
+    refreshTitleLabel();
 
     const remoteContent = data.content || "";
     if (document.activeElement !== textarea && textarea.value !== remoteContent) {
       textarea.value = remoteContent;
     }
+    refreshNoteLabel();
     charCount.textContent = formatCounts(document.activeElement === textarea ? textarea.value : remoteContent);
 
     if (data.updatedAt && data.updatedAt.toDate) {
@@ -191,20 +241,27 @@ const unsubscribe = onSnapshot(
 );
 
 /* ---------------------------------------------------------------------
-   Autosave on typing
+   Autosave (debounced) on typing
    ------------------------------------------------------------------- */
 let saveTimer = null;
 
-textarea.addEventListener("input", () => {
-  charCount.textContent = formatCounts(textarea.value);
+function scheduleSave() {
   setStatus("saving", "Saving…");
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveContent, 700);
+}
+
+titleInput.addEventListener("input", scheduleSave);
+
+textarea.addEventListener("input", () => {
+  charCount.textContent = formatCounts(textarea.value);
+  scheduleSave();
 });
 
 async function saveContent() {
   try {
     await updateDoc(noteRef, {
+      title: titleInput.value,
       content: textarea.value,
       updatedAt: serverTimestamp(),
     });
@@ -224,13 +281,17 @@ saveBtn.addEventListener("click", async () => {
   showToast("Note saved.");
 });
 
-async function applyExpiry(label) {
-  const ms = DURATIONS_MS[label];
-  if (!ms) return;
+let appliedExpiryLabel = "30m";
+let currentCustomDurationMs = null;
+
+async function applyExpiryMs(ms, label) {
   const newExpiresAt = Date.now() + ms;
+  const payload = { expiresAt: newExpiresAt, expiryLabel: label };
+  if (label === "custom") payload.customDurationMs = ms;
   try {
-    await updateDoc(noteRef, { expiresAt: newExpiresAt, expiryLabel: label });
+    await updateDoc(noteRef, payload);
     currentExpiresAt = newExpiresAt;
+    if (label === "custom") currentCustomDurationMs = ms;
     tickCountdown();
   } catch (err) {
     console.error(err);
@@ -238,11 +299,141 @@ async function applyExpiry(label) {
   }
 }
 
-expirySelect.addEventListener("change", () => applyExpiry(expirySelect.value));
+expirySelect.addEventListener("change", () => {
+  if (expirySelect.value === "custom") {
+    expirySelect.value = appliedExpiryLabel;
+    openCustomExpiryModal();
+    return;
+  }
+  appliedExpiryLabel = expirySelect.value;
+  applyExpiryMs(DURATIONS_MS[expirySelect.value], expirySelect.value);
+});
 
 resetBtn.addEventListener("click", async () => {
-  await applyExpiry(expirySelect.value);
+  if (expirySelect.value === "custom") {
+    if (currentCustomDurationMs) {
+      await applyExpiryMs(currentCustomDurationMs, "custom");
+      showToast("Countdown reset.");
+    } else {
+      openCustomExpiryModal();
+    }
+    return;
+  }
+  await applyExpiryMs(DURATIONS_MS[expirySelect.value], expirySelect.value);
   showToast("Countdown reset.");
+});
+
+const customExpiryModal = document.getElementById("modal-custom-expiry");
+const ceYears = document.getElementById("ce-years");
+const ceMonths = document.getElementById("ce-months");
+const ceDays = document.getElementById("ce-days");
+const ceHours = document.getElementById("ce-hours");
+const ceMinutes = document.getElementById("ce-minutes");
+const customExpiryPreview = document.getElementById("custom-expiry-preview");
+const customExpiryError = document.getElementById("custom-expiry-error");
+const applyCustomExpiryBtn = document.getElementById("apply-custom-expiry-btn");
+
+const MAX_CUSTOM_YEARS = 6;
+
+function computeCustomTarget() {
+  const years = parseInt(ceYears.value, 10) || 0;
+  const months = parseInt(ceMonths.value, 10) || 0;
+  const days = parseInt(ceDays.value, 10) || 0;
+  const hours = parseInt(ceHours.value, 10) || 0;
+  const minutes = parseInt(ceMinutes.value, 10) || 0;
+
+  const now = new Date();
+  const target = new Date(now);
+  target.setFullYear(target.getFullYear() + years);
+  target.setMonth(target.getMonth() + months);
+  target.setDate(target.getDate() + days);
+  target.setHours(target.getHours() + hours);
+  target.setMinutes(target.getMinutes() + minutes);
+
+  const maxDate = new Date(now);
+  maxDate.setFullYear(maxDate.getFullYear() + MAX_CUSTOM_YEARS);
+
+  return {
+    target,
+    totalMs: target.getTime() - now.getTime(),
+    isZero: target.getTime() <= now.getTime(),
+    overMax: target.getTime() > maxDate.getTime(),
+  };
+}
+
+function formatCustomPreviewDate(date) {
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "long" });
+  const year = date.getFullYear();
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours === 0 ? 12 : hours;
+  return `${day} ${month} ${year} at ${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
+}
+
+function updateCustomExpiryPreview() {
+  const { target, isZero, overMax } = computeCustomTarget();
+
+  if (overMax) {
+    customExpiryError.textContent = `Maximum limit is ${MAX_CUSTOM_YEARS} years — please choose a shorter duration.`;
+    customExpiryPreview.innerHTML = 'Your note expires on <span class="preview-date"><strong>—</strong></span>';
+    applyCustomExpiryBtn.disabled = true;
+    return;
+  }
+  if (isZero) {
+    customExpiryError.textContent = "Enter at least a few minutes so the note has time to be read.";
+    customExpiryPreview.innerHTML = 'Your note expires on <span class="preview-date"><strong>—</strong></span>';
+    applyCustomExpiryBtn.disabled = true;
+    return;
+  }
+  customExpiryError.textContent = "";
+  applyCustomExpiryBtn.disabled = false;
+  customExpiryPreview.innerHTML = `Your note expires on <span class="preview-date"><strong>${formatCustomPreviewDate(target)}</strong></span>`;
+}
+
+[ceYears, ceMonths, ceDays, ceHours, ceMinutes].forEach((input) => {
+  input.addEventListener("input", updateCustomExpiryPreview);
+});
+
+document.querySelectorAll(".stepper-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const target = document.getElementById(btn.dataset.target);
+    const step = parseInt(btn.dataset.step, 10);
+    const min = parseInt(target.min, 10);
+    const max = parseInt(target.max, 10);
+    let value = (parseInt(target.value, 10) || 0) + step;
+    value = Math.min(max, Math.max(min, value));
+    target.value = value;
+    target.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+});
+
+function openCustomExpiryModal() {
+  customExpiryModal.classList.add("open");
+  updateCustomExpiryPreview();
+  ceYears.focus();
+}
+
+applyCustomExpiryBtn.addEventListener("click", async () => {
+  const { totalMs, isZero, overMax } = computeCustomTarget();
+  if (isZero || overMax) return;
+
+  applyCustomExpiryBtn.disabled = true;
+  applyCustomExpiryBtn.classList.add("is-loading");
+  try {
+    appliedExpiryLabel = "custom";
+    await applyExpiryMs(totalMs, "custom");
+    customExpiryModal.classList.remove("open");
+    showToast("Custom expiry set.");
+  } catch (err) {
+    console.error(err);
+    showToast("Couldn't set custom expiry.", true);
+  } finally {
+    applyCustomExpiryBtn.disabled = false;
+    applyCustomExpiryBtn.classList.remove("is-loading");
+  }
 });
 
 /* ---------------------------------------------------------------------
