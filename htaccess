@@ -1,0 +1,13 @@
+# NoteVault — cache control
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  # Images/fonts/icons: cache for a week — these change rarely, and
+  # aren't part of your normal edit-and-redeploy workflow.
+  <FilesMatch "\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
