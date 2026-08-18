@@ -4,7 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import { firebaseConfig } from "./firebase-config.js";
-import { initNav, initModals, showToast } from "./shared.js";
+import { initNav, initModals, showToast } from "./shared.js?v=1";
 
 initNav();
 initModals();
@@ -437,11 +437,38 @@ applyCustomExpiryBtn.addEventListener("click", async () => {
 /* ---------------------------------------------------------------------
    Copy phrase
    ------------------------------------------------------------------- */
-copyBtn.addEventListener("click", async () => {
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+    }
+  }
   try {
-    await navigator.clipboard.writeText(phrase);
-    showToast("Phrase copied to clipboard.");
+    const tempInput = document.createElement("textarea");
+    tempInput.value = text;
+    tempInput.setAttribute("readonly", "");
+    tempInput.style.position = "fixed";
+    tempInput.style.top = "0";
+    tempInput.style.left = "-9999px";
+    document.body.appendChild(tempInput);
+    tempInput.focus();
+    tempInput.select();
+    tempInput.setSelectionRange(0, tempInput.value.length);
+    const succeeded = document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    return succeeded;
   } catch {
+    return false;
+  }
+}
+
+copyBtn.addEventListener("click", async () => {
+  const copied = await copyTextToClipboard(phrase);
+  if (copied) {
+    showToast("Phrase copied to clipboard.");
+  } else {
     showToast("Couldn't copy — select and copy the phrase manually.", true);
   }
 });
