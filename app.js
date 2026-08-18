@@ -4,8 +4,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import { firebaseConfig } from "./firebase-config.js";
-import { generatePhrase, normalizePhrase } from "./words.js";
-import { initNav, initModals, showToast } from "./shared.js";
+import { generatePhrase, normalizePhrase } from "./words.js?v=1";
+import { initNav, initModals, showToast } from "./shared.js?v=1";
 
 initNav();
 initModals();
@@ -77,6 +77,15 @@ function splitPastedPhrase(rawText) {
 
 wordInputs.forEach((input, i) => {
   input.addEventListener("input", () => {
+    const words = splitPastedPhrase(input.value);
+    if (words.length >= 2) {
+      words.slice(0, wordInputs.length).forEach((word, idx) => {
+        wordInputs[idx].value = word;
+      });
+      const lastFilledIndex = Math.min(words.length, wordInputs.length) - 1;
+      (wordInputs[lastFilledIndex] || loadBtn).focus();
+      return;
+    }
     input.value = input.value.replace(/[^a-zA-Z]/g, "").toLowerCase();
   });
 
